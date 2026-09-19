@@ -34,11 +34,24 @@ jobs:
           pip install --upgrade pip setuptools
           pip install buildozer "cython<3.0.0"
 
-      - name: Pre-accept Android SDK Licenses & Build APK
+      - name: Set up Android SDK & Accept Licenses
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-          printf "24333f8a63b6825ea9c5514f83c2829b004d1fee\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          printf "84831b940f640078f47b039a1b023e392a4e4a77" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          curl -sS -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip -q commandlinetools.zip
+          mv cmdline-tools latest
+          rm commandlinetools.zip
+
+          # Symlink to legacy 'tools' path expected by python-for-android
+          mkdir -p ~/.buildozer/android/platform/android-sdk/tools
+          ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin ~/.buildozer/android/platform/android-sdk/tools/bin
+
+          # Accept all SDK licenses
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses
+
+      - name: Build APK with Buildozer
+        run: |
           buildozer -v android debug --default
 
       - name: Upload APK Artifact
