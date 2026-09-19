@@ -1,0 +1,7 @@
+[INFO   ] Logger: Record log in /data/data/com.termux/files/home/.kivy/logs/kivy_26-09-19_1.txt
+[INFO   ] Kivy: v2.3.1
+[INFO   ] Kivy: Installed at "/data/data/com.termux/files/usr/lib/python3.14/site-packages/kivy/__init__.py"
+[INFO   ] Python: v3.14.6 (main, Jul  5 2026, 10:35:55) [Clang 21.0.0 (https://android.googlesource.com/toolchain/llvm-project 5e96669f0
+[INFO   ] Python: Interpreter at "/data/data/com.termux/files/home/venv/bin/python"
+[INFO   ] Logger: Purge log fired. Processing...
+[INFO   ] Logger: Purge finished!
