@@ -31,7 +31,6 @@ jobs:
             git \
             libffi-dev \
             libssl-dev \
-            libtinfo5 \
             pkg-config \
             zlib1g-dev \
             openjdk-17-jdk \
