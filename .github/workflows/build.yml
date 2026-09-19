@@ -13,6 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -21,16 +27,18 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libtinfo6 cmake libffi-dev libssl-dev
+          sudo apt-get install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses-dev libtinfo6 cmake libffi-dev libssl-dev lld python3-setuptools
 
       - name: Install Buildozer & Cython
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools
           pip install buildozer "cython<3.0.0"
 
       - name: Build APK with Buildozer
+        env:
+          ACCEPT_BUILD_NDK_LICENSES: 1
         run: |
-          yes | buildozer -v android debug
+          buildozer -v android debug --default
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
