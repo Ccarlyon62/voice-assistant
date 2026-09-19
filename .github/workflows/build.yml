@@ -34,23 +34,32 @@ jobs:
           pip install --upgrade pip setuptools
           pip install buildozer "cython<3.0.0"
 
-      - name: Set up Android SDK & Accept Licenses
+      - name: Set up Android SDK & Install Components
         run: |
-          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
-          cd ~/.buildozer/android/platform/android-sdk/cmdline-tools
+          SDK_DIR="$HOME/.buildozer/android/platform/android-sdk"
+          mkdir -p "$SDK_DIR/cmdline-tools"
+          cd "$SDK_DIR/cmdline-tools"
+          
           curl -sS -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip -q commandlinetools.zip
           mv cmdline-tools latest
           rm commandlinetools.zip
 
-          # Symlink to legacy 'tools' path expected by python-for-android
-          mkdir -p ~/.buildozer/android/platform/android-sdk/tools
-          ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin ~/.buildozer/android/platform/android-sdk/tools/bin
+          # Legacy symlink for python-for-android
+          mkdir -p "$SDK_DIR/tools"
+          ln -sf "$SDK_DIR/cmdline-tools/latest/bin" "$SDK_DIR/tools/bin"
 
-          # Accept all SDK licenses
-          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses
+          # Export local paths for this step
+          export PATH="$SDK_DIR/cmdline-tools/latest/bin:$PATH"
+
+          # Accept licenses and install platform-tools, build-tools, and platform API
+          yes | sdkmanager --sdk_root="$SDK_DIR" --licenses
+          yes | sdkmanager --sdk_root="$SDK_DIR" "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
       - name: Build APK with Buildozer
+        env:
+          ANDROID_HOME: "/home/runner/.buildozer/android/platform/android-sdk"
+          ANDROID_SDK_ROOT: "/home/runner/.buildozer/android/platform/android-sdk"
         run: |
           buildozer -v android debug --default
 
