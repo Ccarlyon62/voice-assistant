@@ -4,6 +4,7 @@
 # See the end of the file for more details and warnings about common mistakes.
 
 [app]
+android.sdk_tools_version = commandlinetools-linux-11076708_latest.zip
 
 # (str) Title of your application
 title = Voice Assistant
